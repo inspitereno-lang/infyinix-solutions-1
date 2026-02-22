@@ -1,179 +1,191 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Facebook, Instagram, Linkedin, Youtube, Twitter } from 'lucide-react';
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Linkedin, 
+  Twitter, 
+  Github,
+  ArrowUpRight
+} from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
+const footerLinks = {
+  services: [
+    { label: 'Web Development', href: '#' },
+    { label: 'AI Solutions', href: '#' },
+    { label: 'Cloud Infrastructure', href: '#' },
+    { label: 'UI/UX Design', href: '#' },
+    { label: 'Cybersecurity', href: '#' },
+  ],
+  company: [
+    { label: 'About Us', href: '#about' },
+    { label: 'Our Team', href: '#' },
+    { label: 'Careers', href: '#' },
+    { label: 'Blog', href: '#' },
+    { label: 'Contact', href: '#cta' },
+  ],
+  resources: [
+    { label: 'Documentation', href: '#' },
+    { label: 'Case Studies', href: '#portfolio' },
+    { label: 'Privacy Policy', href: '#' },
+    { label: 'Terms of Service', href: '#' },
+  ],
+};
 
-const Footer = () => {
-  const footerRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+const socialLinks = [
+  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+  { icon: Twitter, href: '#', label: 'Twitter' },
+  { icon: Github, href: '#', label: 'GitHub' },
+];
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        contentRef.current?.children || [],
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-          stagger: 0.08,
-          ease: 'expo.out',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 95%',
-            once: true,
-          },
-        }
-      );
-    }, footerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const footerLinks = {
-    'Services': [
-      { label: 'AI & Automation', href: '#' },
-      { label: 'Cloud Solutions', href: '#' },
-      { label: 'Web & Mobile Apps', href: '#' },
-      { label: 'Data Engineering', href: '#' },
-      { label: 'UI/UX Design', href: '#' },
-    ],
-    'Industries': [
-      { label: 'HealthTech', href: '#' },
-      { label: 'FinTech', href: '#' },
-      { label: 'E-Commerce', href: '#' },
-      { label: 'EdTech', href: '#' },
-      { label: 'SaaS', href: '#' },
-    ],
-    'Company': [
-      { label: 'About Us', href: '#about' },
-      { label: 'Our Team', href: '#' },
-      { label: 'Careers', href: '#careers' },
-      { label: 'Blog', href: '#' },
-      { label: 'Contact', href: '#contact' },
-    ],
+export default function Footer() {
+  const scrollToSection = (href: string) => {
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
-  const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
-  ];
-
   return (
-    <footer
-      ref={footerRef}
-      className="relative w-full bg-[#050B14] overflow-hidden"
-    >
-      {/* Premium Background Elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: `radial-gradient(#3898EC 1px, transparent 0)`, backgroundSize: '40px 40px' }} />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#3898EC]/5 rounded-full blur-[120px]" />
+    <footer className="relative w-full bg-[#0A0A0A] border-t border-white/5">
+      {/* Main Footer */}
+      <div className="w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-16 lg:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
+          {/* Brand Column */}
+          <div className="lg:col-span-2">
+            <a href="#" className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1F6FE5] to-[#3B82F6] flex items-center justify-center">
+                <span className="text-white font-bold text-xl">I</span>
+              </div>
+              <span className="text-white font-semibold text-2xl">
+                Infopark<span className="text-[#1F6FE5]">Tech</span>
+              </span>
+            </a>
+            <p className="text-gray-400 mb-6 max-w-sm">
+              Engineering the future of digital innovation. We transform complex 
+              challenges into elegant, scalable technology solutions.
+            </p>
+
+            {/* Contact Info */}
+            <div className="space-y-3">
+              <a
+                href="mailto:hello@infoparktech.com"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+              >
+                <Mail className="w-5 h-5 text-[#1F6FE5]" />
+                hello@infoparktech.com
+              </a>
+              <a
+                href="tel:+914844020000"
+                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+              >
+                <Phone className="w-5 h-5 text-[#1F6FE5]" />
+                +91 484 402 0000
+              </a>
+              <div className="flex items-start gap-3 text-gray-400">
+                <MapPin className="w-5 h-5 text-[#1F6FE5] flex-shrink-0 mt-0.5" />
+                <span>
+                  Infopark Phase 1,<br />
+                  Kakkanad, Kochi,<br />
+                  Kerala 682030
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Services Links */}
+          <div>
+            <h3 className="text-white font-semibold mb-6">Services</h3>
+            <ul className="space-y-3">
+              {footerLinks.services.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(link.href);
+                    }}
+                    className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <h3 className="text-white font-semibold mb-6">Company</h3>
+            <ul className="space-y-3">
+              {footerLinks.company.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(link.href);
+                    }}
+                    className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources Links */}
+          <div>
+            <h3 className="text-white font-semibold mb-6">Resources</h3>
+            <ul className="space-y-3">
+              {footerLinks.resources.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(link.href);
+                    }}
+                    className="text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
+                  >
+                    {link.label}
+                    <ArrowUpRight className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
 
-      {/* Top Transition Line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3898EC]/30 to-transparent" />
-
-      <div ref={contentRef} className="w-full px-4 sm:px-6 lg:px-12 py-10 sm:py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto">
-          {/* Main Footer Content */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-10 lg:mb-12">
-            {/* Logo & Description */}
-            <div className="col-span-2 md:col-span-3 lg:col-span-2">
-              <a href="#" className="inline-block mb-3 sm:mb-4">
-                <img
-                  src="/infynixbg.png"
-                  alt="INFYNIX"
-                  className="h-10 sm:h-12 object-contain"
-                />
-              </a>
-              <p className="text-gray-400 text-sm mb-4 sm:mb-6 max-w-xs">
-                A next-generation digital transformation company dedicated to
-                reimagining how businesses connect with their customers.
-              </p>
-
-              {/* Social Links */}
-              <div className="flex gap-2 sm:gap-3">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className="w-9 h-9 sm:w-10 sm:h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#3898EC] hover:border-[#3898EC] hover:scale-110 transition-all duration-300"
-                  >
-                    <social.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Link Columns */}
-            {Object.entries(footerLinks).map(([title, links]) => (
-              <div key={title}>
-                <h4 className="text-white font-semibold text-sm sm:text-base mb-3 sm:mb-4">{title}</h4>
-                <ul className="space-y-2 sm:space-y-2.5">
-                  {links.map((link) => (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="text-gray-400 hover:text-white hover:translate-x-0.5 inline-block transition-all duration-300 text-xs sm:text-sm"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Contact Info */}
-          <div className="border-t border-white/10 pt-6 sm:pt-8 mb-6 sm:mb-8">
-            <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm">
-              <div>
-                <span className="text-gray-500">HQ:</span>{' '}
-                <span className="text-gray-300">Infopark Campus, Kochi, India</span>
-              </div>
-              <div>
-                <span className="text-gray-500">Email:</span>{' '}
-                <a href="mailto:info@infynix.com" className="text-gray-300 hover:text-[#3898EC] transition-colors">
-                  info@infynix.com
-                </a>
-              </div>
-              <div>
-                <span className="text-gray-500">Phone:</span>{' '}
-                <a href="tel:+918714153735" className="text-gray-300 hover:text-[#3898EC] transition-colors">
-                  +91 87141 53735
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="border-t border-white/10 pt-5 sm:pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-            <p className="text-gray-500 text-xs sm:text-sm text-center sm:text-left">
-              Copyright © 2026 Infynix Solutions. All Rights Reserved
+      {/* Bottom Bar */}
+      <div className="border-t border-white/5">
+        <div className="w-full px-6 sm:px-8 lg:px-16 xl:px-24 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-gray-500 text-sm">
+              © {new Date().getFullYear()} Infopark Tech Solutions. All rights reserved.
             </p>
-            <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm">
-              <a href="#" className="text-gray-500 hover:text-white transition-colors duration-300">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-gray-500 hover:text-white transition-colors duration-300">
-                Terms of Service
-              </a>
-              <a href="#" className="text-gray-500 hover:text-white transition-colors duration-300">
-                Cookies
-              </a>
+
+            {/* Social Links */}
+            <div className="flex items-center gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  className="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

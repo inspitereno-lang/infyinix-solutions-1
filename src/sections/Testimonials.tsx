@@ -1,252 +1,235 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Quote, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronLeft, ChevronRight, Quote, ArrowRight, Star } from 'lucide-react';
+import { useLazyLoad } from '@/hooks/useLazyLoad';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  company: string;
-  image: string;
-  quote: string;
-  rating: number;
-}
+const testimonials = [
+  {
+    id: 1,
+    name: 'Michael Roberts',
+    role: 'CEO',
+    company: 'TechVentures Inc.',
+    avatar: '/avatar-1.jpg',
+    quote: 'Infopark Tech transformed our digital infrastructure completely. Their team delivered a scalable solution that exceeded our expectations.',
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: 'Sarah Chen',
+    role: 'CTO',
+    company: 'DataFlow Systems',
+    avatar: '/avatar-2.jpg',
+    quote: 'Working with this team was a game-changer for our startup. They built an AI-powered platform that helped us secure Series A funding.',
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: 'David Kim',
+    role: 'Product Director',
+    company: 'GlobalFin Solutions',
+    avatar: '/avatar-3.jpg',
+    quote: 'The level of professionalism and technical skill demonstrated by Infopark Tech is exceptional. They delivered on time with zero compromises.',
+    rating: 5,
+  },
+];
 
-const Testimonials = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const testimonials: Testimonial[] = [
-    {
-      id: 1,
-      name: 'Prashob',
-      role: 'Business Owner',
-      company: 'Tech Zone',
-      image: 'https://i.pravatar.cc/150?u=1',
-      quote: "Inspite Technologies refined our SEO strategy with surgical precision. Their deep technical knowledge and proactive approach brought us to the first page faster than we ever imagined.",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: 'Prathyusha',
-      role: 'Growth Lead',
-      company: 'Consumer Group',
-      image: 'https://i.pravatar.cc/150?u=2',
-      quote: "The energy and creativity the team brings is infectious. They didn't just build a website; they built a conversion engine that has fundamentally changed our brand awareness.",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: 'Hima R Anand',
-      role: 'Project Director',
-      company: 'Creative Studio',
-      image: 'https://i.pravatar.cc/150?u=3',
-      quote: "Blown away by the design concepts. Their ability to fuse aesthetic beauty with functional excellence is rare. They delivered on time, exceeding every single requirement.",
-      rating: 5,
-    },
-    {
-      id: 4,
-      name: 'Muhammed Shafi',
-      role: 'Operations Head',
-      company: 'Local Business',
-      image: 'https://i.pravatar.cc/150?u=4',
-      quote: "Scale and performance are at the heart of what they do. Our digital presence has exploded since we partnered with their Infopark team. Highly recommended!",
-      rating: 5,
-    },
-    {
-      id: 5,
-      name: 'Ribin B',
-      role: 'Founder',
-      company: 'Startup Hub',
-      image: 'https://i.pravatar.cc/150?u=5',
-      quote: "They actually listen. It sounds simple, but their responsiveness and willingness to iterate until perfection is achieved is what sets them apart from the competition.",
-      rating: 5,
-    },
-  ];
+export default function Testimonials() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { ref: sectionRef, isVisible } = useLazyLoad<HTMLElement>({ threshold: 0.1 });
+  const headerRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!isVisible) return;
+
     const ctx = gsap.context(() => {
-      // Entrance animations
-      gsap.from('.testimonial-header', {
-        y: 60,
-        opacity: 0,
-        duration: 1.2,
-        ease: 'expo.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 80%',
-        }
-      });
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current.querySelectorAll('.animate-item'),
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 80%',
+              once: true,
+            },
+          }
+        );
+      }
 
-      gsap.from('.testimonial-card', {
-        y: 100,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 1,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 70%',
-        }
-      });
-
-      // Floating background orbs
-      gsap.to('.bg-orb-test-1', {
-        x: '100',
-        y: '-50',
-        duration: 15,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      });
-      gsap.to('.bg-orb-test-2', {
-        x: '-100',
-        y: '50',
-        duration: 20,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      });
-    }, sectionRef);
+      if (sliderRef.current) {
+        gsap.fromTo(
+          sliderRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sliderRef.current,
+              start: 'top 80%',
+              once: true,
+            },
+          }
+        );
+      }
+    }, sectionRef as React.RefObject<HTMLElement>);
 
     return () => ctx.revert();
+  }, [isVisible]);
+
+  // Auto-slide
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(interval);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % (testimonials.length - 2));
-  };
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+  }, []);
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + (testimonials.length - 2)) % (testimonials.length - 2));
-  };
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  }, []);
 
   return (
     <section
       id="testimonials"
       ref={sectionRef}
-      className="relative py-24 lg:py-40 w-full overflow-hidden bg-[#050B14]"
+      className="relative py-16 sm:py-20 lg:py-28 w-full overflow-hidden"
     >
-      {/* Dynamic Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="bg-orb-test-1 absolute top-1/4 -left-20 w-[500px] h-[500px] bg-[#3898EC]/5 rounded-full blur-[120px]" />
-        <div className="bg-orb-test-2 absolute bottom-1/4 -right-20 w-[400px] h-[400px] bg-[#FF6B35]/5 rounded-full blur-[100px]" />
-        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-      </div>
+      {/* Background */}
+      <div className="absolute top-0 right-0 w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-[#1F6FE5]/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] bg-[#F97316]/5 rounded-full blur-[60px] pointer-events-none" />
 
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        {/* Header Section */}
-        <div className="testimonial-header flex flex-col items-center text-center mb-20 lg:mb-32">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#3898EC]" />
-            <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">Client Success Stories</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight max-w-3xl">
-            Trusted by the world's most <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3898EC] to-[#60A5FA]">ambitious</span> teams.
+      <div className="w-full px-4 sm:px-6 lg:px-16 xl:px-24">
+        {/* Header */}
+        <div ref={headerRef} className="text-center mb-10 sm:mb-16">
+          <span className="animate-item text-[#1F6FE5] text-xs sm:text-sm font-semibold tracking-wider uppercase opacity-0">
+            Testimonials
+          </span>
+          <h2 className="animate-item text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mt-3 sm:mt-4 mb-4 sm:mb-6 opacity-0">
+            What Our <span className="text-gradient">Clients Say</span>
           </h2>
-          <p className="text-gray-500 text-lg max-w-2xl font-light">
-            We don't just deliver projects; we build long-term partnerships that drive sustainable growth and technological leadership.
+          <p className="animate-item text-gray-400 max-w-2xl mx-auto text-sm sm:text-base opacity-0">
+            Do not just take our word for it. Here is what industry leaders have to say about working with us.
           </p>
         </div>
 
-        {/* Multi-Card Slider Container */}
-        <div className="relative">
-          <div
-            ref={containerRef}
-            className="flex gap-6 lg:gap-8 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
-            style={{ transform: `translateX(calc(-${currentIndex * 33.33}%))` }}
-          >
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.id}
-                className="testimonial-card flex-none w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-21px)]"
-              >
-                <div className="h-full bg-[#0a0f1a]/60 backdrop-blur-xl border border-white/5 p-10 lg:p-12 rounded-[2.5rem] flex flex-col justify-between hover:bg-[#0a0f1a]/80 hover:border-[#3898EC]/30 transition-all duration-500 group shadow-2xl relative overflow-hidden">
+        {/* Testimonial Slider */}
+        <div ref={sliderRef} className="relative max-w-4xl mx-auto opacity-0">
+          {/* Main Card */}
+          <div className="relative glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 overflow-hidden">
+            {/* Quote Icon */}
+            <div className="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-[#F97316]/10 flex items-center justify-center">
+              <Quote className="w-5 h-5 sm:w-8 sm:h-8 text-[#F97316]" />
+            </div>
 
-                  {/* Stylized Quote Icon */}
-                  <div className="absolute top-8 right-8 text-white/5 group-hover:text-[#3898EC]/10 transition-colors duration-500">
-                    <Quote className="w-20 h-20 rotate-12" />
+            {/* Content */}
+            <div className="relative min-h-[200px] sm:min-h-[180px]">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={testimonial.id}
+                  className={`transition-all duration-500 ${
+                    index === activeIndex
+                      ? 'opacity-100 translate-x-0 relative'
+                      : 'opacity-0 absolute inset-0 translate-x-4 pointer-events-none'
+                  }`}
+                >
+                  {/* Rating */}
+                  <div className="flex gap-1 mb-4 sm:mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 sm:w-5 sm:h-5 fill-[#F97316] text-[#F97316]"
+                      />
+                    ))}
                   </div>
 
-                  <div className="relative z-10">
-                    {/* Rating */}
-                    <div className="flex gap-1 mb-8">
-                      {[1, 2, 3, 4, 5].map(i => (
-                        <Star key={i} className={`w-4 h-4 ${i <= testimonial.rating ? 'fill-[#EAB308] text-[#EAB308]' : 'text-gray-700'}`} />
-                      ))}
-                    </div>
+                  {/* Quote */}
+                  <blockquote className="text-lg sm:text-xl lg:text-2xl text-white leading-relaxed mb-6 sm:mb-8">
+                    "{testimonial.quote}"
+                  </blockquote>
 
-                    {/* Quote Text */}
-                    <p className="text-gray-300 text-xl lg:text-2xl font-light leading-relaxed mb-12">
-                      “{testimonial.quote}”
-                    </p>
-                  </div>
-
-                  {/* Author Meta */}
-                  <div className="flex items-center gap-5 pt-8 border-t border-white/5 relative z-10">
-                    <div className="w-14 h-14 rounded-2xl overflow-hidden border border-white/10 group-hover:border-[#3898EC]/40 transition-colors">
-                      <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-500" />
-                    </div>
+                  {/* Author */}
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <img
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-[#1F6FE5]/30"
+                      loading="lazy"
+                    />
                     <div>
-                      <h4 className="text-white font-bold text-lg">{testimonial.name}</h4>
-                      <p className="text-gray-500 text-sm font-medium">
-                        {testimonial.role} <span className="text-[#3898EC]/60 mx-1">@</span> {testimonial.company}
-                      </p>
+                      <div className="text-white font-semibold text-sm sm:text-base">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-gray-400 text-xs sm:text-sm">
+                        {testimonial.role}, {testimonial.company}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Progress Bar */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+              <div
+                className="h-full bg-gradient-to-r from-[#1F6FE5] to-[#F97316] transition-all duration-300"
+                style={{
+                  width: `${((activeIndex + 1) / testimonials.length) * 100}%`,
+                }}
+              />
+            </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex justify-center items-center gap-12 mt-16 lg:mt-24">
+          {/* Navigation */}
+          <div className="flex justify-center items-center gap-3 sm:gap-4 mt-6 sm:mt-8">
             <button
-              onClick={prevSlide}
-              className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:bg-white hover:text-black hover:border-white transition-all duration-500 group"
+              onClick={handlePrev}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
               aria-label="Previous testimonial"
             >
-              <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
-            <div className="flex gap-3">
-              {Array.from({ length: testimonials.length - 2 }).map((_, i) => (
+            {/* Dots */}
+            <div className="flex gap-2">
+              {testimonials.map((_, index) => (
                 <button
-                  key={i}
-                  onClick={() => setCurrentIndex(i)}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIndex ? 'w-10 bg-[#3898EC]' : 'w-3 bg-white/10 hover:bg-white/20'}`}
+                  key={index}
+                  onClick={() => setActiveIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === activeIndex
+                      ? 'w-6 sm:w-8 bg-[#1F6FE5]'
+                      : 'bg-white/20 hover:bg-white/40'
+                  }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
                 />
               ))}
             </div>
 
             <button
-              onClick={nextSlide}
-              className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:bg-white hover:text-black hover:border-white transition-all duration-500 group"
+              onClick={handleNext}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full glass flex items-center justify-center text-white hover:bg-white/10 transition-colors"
               aria-label="Next testimonial"
             >
-              <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
-        </div>
-
-        {/* Global CTA Link */}
-        <div className="mt-24 text-center">
-          <a
-            href="https://inspitetech.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
-          >
-            <span className="text-sm font-bold tracking-widest uppercase">Explore all projects</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
         </div>
       </div>
     </section>
   );
-};
-
-export default Testimonials;
+}

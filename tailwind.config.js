@@ -5,16 +5,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        infynix: {
-          aqua: '#00E0C6',
-          cyan: '#00D9FF',
-          blue: '#0D1A40',
-          dark: '#000000',
-          light: '#F5F7FA',
-          primary: '#FF7B00',
-          secondary: '#0066CC',
-          accent: '#FFB366',
-        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

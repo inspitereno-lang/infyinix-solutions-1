@@ -1,59 +1,100 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useSmoothScroll } from './hooks/useSmoothScroll';
 
-import Header from './sections/Header';
-import Hero from './sections/Hero';
-import Stats from './sections/Stats';
-import AIProductDevelopment from './sections/AIProductDevelopment';
-import Services from './sections/Services';
-import Industries from './sections/Industries';
-import Testimonials from './sections/Testimonials';
-import Contact from './sections/Contact';
-import Footer from './sections/Footer';
-import AIChatWidget from './components/AIChatWidget';
-import SmoothScroll from './components/SmoothScroll';
+// Lazy load sections for better performance
+const Navigation = lazy(() => import('./sections/Navigation'));
+const Hero = lazy(() => import('./sections/Hero'));
+const About = lazy(() => import('./sections/About'));
+const Services = lazy(() => import('./sections/Services'));
+const Portfolio = lazy(() => import('./sections/Portfolio'));
+const Stats = lazy(() => import('./sections/Stats'));
+const Testimonials = lazy(() => import('./sections/Testimonials'));
+const Vision = lazy(() => import('./sections/Vision'));
+const CTA = lazy(() => import('./sections/CTA'));
+const Footer = lazy(() => import('./sections/Footer'));
 
+import './App.css';
+
+// Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
+// Loading fallback
+const SectionLoader = () => (
+  <div className="w-full h-64 flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-[#1F6FE5] border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
 function App() {
+  // Initialize smooth scrolling
+  useSmoothScroll();
+
   useEffect(() => {
-    // Initialize smooth scroll behavior
+    // Configure ScrollTrigger defaults
     ScrollTrigger.defaults({
-      markers: false,
+      toggleActions: 'play none none none',
     });
 
-    // Refresh ScrollTrigger on window resize
-    const handleResize = () => {
+    // Refresh ScrollTrigger after all content loads
+    const timer = setTimeout(() => {
       ScrollTrigger.refresh();
-    };
+    }, 100);
 
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup
     return () => {
-      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
 
   return (
-    <SmoothScroll>
-      <div className="min-h-screen bg-infynix-blue text-white overflow-x-hidden">
-        <Header />
-        <main>
+    <div className="relative min-h-screen bg-[#0A0A0A] overflow-x-hidden">
+      {/* Navigation */}
+      <Suspense fallback={null}>
+        <Navigation />
+      </Suspense>
+
+      {/* Main Content */}
+      <main>
+        <Suspense fallback={<SectionLoader />}>
           <Hero />
-          <Stats />
-          <AIProductDevelopment />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <About />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
           <Services />
-          <Industries />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Portfolio />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Stats />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
           <Testimonials />
-          <Contact />
-        </main>
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Vision />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <CTA />
+        </Suspense>
+      </main>
+
+      {/* Footer */}
+      <Suspense fallback={null}>
         <Footer />
-        <AIChatWidget />
-      </div>
-    </SmoothScroll>
+      </Suspense>
+    </div>
   );
 }
 

@@ -1,252 +1,252 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { 
+  Code2, 
+  Brain, 
+  Cloud, 
+  Palette, 
+  Shield,
+  ArrowRight
+} from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import type { LucideIcon } from 'lucide-react';
-import { ArrowRight, Lightbulb, Code2, Palette, Server, Shield, Blocks } from 'lucide-react';
-import Magnetic from '@/components/Magnetic';
+import { useLazyLoad } from '@/hooks/useLazyLoad';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface ServiceCardProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  index: number;
-}
+const services = [
+  {
+    id: 1,
+    icon: Code2,
+    title: 'Web Development',
+    description: 'Custom web applications built with cutting-edge technologies. From responsive websites to complex enterprise solutions.',
+    features: ['React & Next.js', 'Node.js Backend', 'API Development', 'E-commerce'],
+    color: '#1F6FE5'
+  },
+  {
+    id: 2,
+    icon: Brain,
+    title: 'AI Solutions',
+    description: 'Harness the power of artificial intelligence to automate processes and create intelligent applications.',
+    features: ['Machine Learning', 'NLP & Chatbots', 'Computer Vision', 'Predictive Analytics'],
+    color: '#F97316'
+  },
+  {
+    id: 3,
+    icon: Cloud,
+    title: 'Cloud Infrastructure',
+    description: 'End-to-end cloud services including migration, architecture design, and DevOps implementation.',
+    features: ['AWS & Azure', 'Kubernetes', 'CI/CD Pipelines', 'Serverless'],
+    color: '#1F6FE5'
+  },
+  {
+    id: 4,
+    icon: Palette,
+    title: 'UI/UX Design',
+    description: 'User-centered design that combines aesthetics with functionality for delightful experiences.',
+    features: ['User Research', 'Wireframing', 'Prototyping', 'Design Systems'],
+    color: '#F97316'
+  },
+  {
+    id: 5,
+    icon: Shield,
+    title: 'Cybersecurity',
+    description: 'Protect your digital assets with comprehensive security solutions and monitoring.',
+    features: ['Security Audits', 'Penetration Testing', 'Compliance', 'Monitoring'],
+    color: '#1F6FE5'
+  }
+];
 
-const ServiceCard = ({ icon: Icon, title, description, index }: ServiceCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        cardRef.current,
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: 'power4.out',
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: 'top 85%',
-            once: true,
-          },
-        }
-      );
-    }, cardRef);
-
-    return () => ctx.revert();
-  }, [index]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMousePosition({ x, y });
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className="group relative bg-[#0a0f1a]/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-10 transition-all duration-500 hover:-translate-y-2 overflow-hidden"
-    >
-      {/* Spotlight Effect */}
-      <div
-        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(56, 152, 236, 0.1), transparent 40%)`,
-        }}
-      />
-
-      {/* Sub-border highlight following mouse */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
-        style={{
-          boxShadow: `inset 0 0 0 1px rgba(255, 255, 255, 0.05)`,
-          background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.06), transparent 40%)`,
-          zIndex: 1
-        }}
-      />
-
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Recessed Icon Well */}
-        <div className="w-14 h-14 bg-[#050B14] rounded-2xl flex items-center justify-center mb-8 shadow-inner border border-white/5 group-hover:border-[#3898EC]/30 transition-colors duration-500 relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#3898EC]/20 to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-500" />
-          <Icon className="w-6 h-6 text-gray-400 group-hover:text-[#3898EC] transition-colors duration-500 relative z-10" />
-        </div>
-
-        {/* Content */}
-        <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all duration-500 tracking-tight">
-          {title}
-        </h3>
-        <p className="text-gray-400 text-base leading-relaxed font-light mb-8 flex-grow">
-          {description}
-        </p>
-
-        {/* Action Link */}
-        <div className="flex items-center gap-3 text-sm font-semibold text-white/50 group-hover:text-white transition-colors duration-300 mt-auto">
-          <span>Explore Service</span>
-          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#3898EC] group-hover:text-white transition-all duration-300 transform group-hover:translate-x-2">
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Services = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const pillRef = useRef<HTMLDivElement>(null);
-
-  const services = [
-    {
-      icon: Lightbulb,
-      title: 'Application Engineering',
-      description: 'Architecting resilient, large-scale custom applications with intuitive interfaces and seamless cloud-native integrations.',
-    },
-    {
-      icon: Code2,
-      title: 'AI & Machine Learning',
-      description: 'Deploying sophisticated AI models to automate workflows, uncover deep insights, and build truly intelligent products.',
-    },
-    {
-      icon: Shield,
-      title: 'Cloud & Infrastructure',
-      description: 'Designing highly secure, scalable, and autonomous cloud environments that guarantee business continuity.',
-    },
-    {
-      icon: Server,
-      title: 'Data Architecture',
-      description: 'Transforming massive, messy data lakes into structured, actionable intelligence hubs using modern data platforms.',
-    },
-    {
-      icon: Palette,
-      title: 'Experience Design (UX/UI)',
-      description: 'Fusing deep psychological principles with high-end aesthetic execution to create platform experiences that convert.',
-    },
-    {
-      icon: Blocks,
-      title: 'Platform Modernization',
-      description: 'Breaking down legacy monoliths into agile, microservice-driven platforms ready for the next decade of scale.',
-    },
-  ];
+export default function Services() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const { ref: sectionRef, isVisible } = useLazyLoad<HTMLElement>({ threshold: 0.1 });
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Use gsap.matchMedia for responsive ScrollTriggers
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 1024px)", () => {
-        // Pin the left column on desktop while right column scrolls
-        ScrollTrigger.create({
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          pin: stickyRef.current,
-          pinSpacing: false,
-        });
-      });
-
-      // Entrance animation for sticky left column
-      gsap.fromTo(
-        stickyRef.current?.children || [],
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.1,
-          ease: 'power4.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            once: true,
-          },
-        }
-      );
-
-      return () => mm.revert();
-    }, sectionRef);
-
-    return () => ctx.revert();
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const ctx = gsap.context(() => {
+      if (headerRef.current) {
+        gsap.fromTo(
+          headerRef.current.querySelectorAll('.animate-item'),
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 80%',
+              once: true,
+            },
+          }
+        );
+      }
+
+      if (cardsRef.current) {
+        gsap.fromTo(
+          cardsRef.current.querySelectorAll('.service-card'),
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: 'top 80%',
+              once: true,
+            },
+          }
+        );
+      }
+    }, sectionRef as React.RefObject<HTMLElement>);
+
+    return () => ctx.revert();
+  }, [isVisible]);
 
   return (
     <section
       id="services"
       ref={sectionRef}
-      className="relative bg-[#050B14] w-full pt-20 pb-20 lg:pt-32 lg:pb-32"
+      className="relative py-16 sm:py-20 lg:py-28 w-full overflow-hidden"
     >
-      {/* Premium Background Elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: `radial-gradient(#3898EC 1px, transparent 0)`, backgroundSize: '40px 40px' }} />
-      </div>
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1F6FE5]/5 to-transparent pointer-events-none" />
 
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-12 max-w-[1400px] mx-auto">
+      <div className="w-full px-4 sm:px-6 lg:px-16 xl:px-24">
+        {/* Header */}
+        <div ref={headerRef} className="text-center mb-10 sm:mb-16">
+          <span className="animate-item text-[#F97316] text-xs sm:text-sm font-semibold tracking-wider uppercase opacity-0">
+            Our Services
+          </span>
+          <h2 className="animate-item text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mt-3 sm:mt-4 mb-4 sm:mb-6 opacity-0">
+            Solutions That <span className="text-gradient">Drive Growth</span>
+          </h2>
+          <p className="animate-item text-gray-400 max-w-2xl mx-auto text-sm sm:text-base lg:text-lg opacity-0">
+            From concept to deployment, we offer end-to-end technology services 
+            tailored to your business needs.
+          </p>
+        </div>
 
-        {/* Editorial Split Layout */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start relative">
+        {/* Services Grid - Mobile: Stack, Desktop: Accordion */}
+        <div
+          ref={cardsRef}
+          className={`${isMobile ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex gap-2 h-[450px] lg:h-[500px]'}`}
+        >
+          {services.map((service, index) => {
+            const isActive = activeIndex === index;
+            const Icon = service.icon;
 
-          {/* Left Sticky Column */}
-          <div className="w-full lg:w-[40%] flex-shrink-0" >
-            <div ref={stickyRef} className="lg:h-screen lg:flex lg:flex-col lg:justify-center lg:-mt-20">
+            return (
+              <div
+                key={service.id}
+                className={`service-card relative rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ${
+                  isMobile 
+                    ? 'bg-[#111111] hover:bg-[#1a1a1a]' 
+                    : isActive
+                      ? 'flex-[3] bg-gradient-to-br from-[#1F6FE5]/20 to-[#0A0A0A]'
+                      : 'flex-1 bg-[#111111] hover:bg-[#1a1a1a]'
+                } opacity-0`}
+                onClick={() => setActiveIndex(index)}
+                onMouseEnter={() => !isMobile && setActiveIndex(index)}
+              >
+                {/* Border Glow Effect - Desktop only */}
+                {!isMobile && (
+                  <div
+                    className={`absolute inset-0 rounded-xl sm:rounded-2xl transition-opacity duration-300 pointer-events-none ${
+                      isActive ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    style={{
+                      background: `linear-gradient(135deg, ${service.color}40, transparent)`,
+                      padding: '1px',
+                    }}
+                  />
+                )}
 
-              {/* Pill */}
-              <div ref={pillRef} className="inline-flex items-center gap-2.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/5 border border-white/10 rounded-full mb-6 sm:mb-8 w-fit shrink-0 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-300 tracking-wide uppercase">
-                  Service Offerings
-                </span>
-              </div>
-
-              {/* Headline */}
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 lg:mb-8 tracking-tight leading-[1.1]">
-                End-to-end capabilities <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-300">at scale.</span>
-              </h2>
-
-              {/* Description */}
-              <p className="text-lg lg:text-xl text-gray-400 leading-relaxed font-light mb-10 max-w-md">
-                We don't just write code. We architect strategic platforms that drive measurable business outcomes, transforming complex challenges into elegant digital solutions.
-              </p>
-
-              {/* CTA link */}
-              <Magnetic strength={0.2}>
-                <a href="#contact" className="group inline-flex items-center gap-4 text-white hover:text-[#3898EC] transition-colors duration-300">
-                  <span className="text-lg font-semibold tracking-wide border-b border-transparent group-hover:border-[#3898EC] transition-colors pb-1">Discuss your needs</span>
-                  <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[#3898EC] transition-colors">
-                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                <div className="relative h-full p-4 sm:p-5 lg:p-6 flex flex-col">
+                  {/* Icon */}
+                  <div
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 transition-all duration-300 ${
+                      isActive ? 'bg-[#1F6FE5]' : 'bg-white/5'
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                        isActive ? 'text-white' : 'text-gray-400'
+                      }`}
+                    />
                   </div>
-                </a>
-              </Magnetic>
 
-            </div>
-          </div>
+                  {/* Title */}
+                  <h3 className={`text-base sm:text-lg font-bold mb-2 sm:mb-3 transition-colors ${
+                    isActive ? 'text-white' : 'text-gray-300'
+                  }`}>
+                    {service.title}
+                  </h3>
 
-          {/* Right Scrolling Grid */}
-          <div className="w-full lg:w-[60%] lg:py-32">
-            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-              {services.map((service, index) => (
-                <ServiceCard
-                  key={service.title}
-                  icon={service.icon}
-                  title={service.title}
-                  description={service.description}
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
+                  {/* Content - Show on active or mobile */}
+                  <div className={`flex-1 overflow-hidden transition-all duration-300 ${
+                    isMobile || isActive ? 'opacity-100 max-h-[300px]' : 'opacity-0 max-h-0'
+                  }`}>
+                    <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed">
+                      {service.description}
+                    </p>
 
+                    {/* Features */}
+                    <div className="grid grid-cols-2 gap-2 mb-3 sm:mb-4">
+                      {service.features.map((feature, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-1.5 sm:gap-2 text-xs text-gray-300"
+                        >
+                          <div
+                            className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: service.color }}
+                          />
+                          <span className="truncate">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* CTA */}
+                    <button className="flex items-center gap-1.5 sm:gap-2 text-[#F97316] text-xs sm:text-sm font-medium group">
+                      Learn More
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  </div>
+
+                  {/* Number indicator - Desktop only */}
+                  {!isMobile && (
+                    <div className="absolute top-4 right-4 sm:top-6 sm:right-6 text-3xl sm:text-4xl lg:text-5xl font-bold text-white/5">
+                      0{index + 1}
+                    </div>
+                  )}
+
+                  {/* Bottom accent line */}
+                  <div
+                    className={`absolute bottom-0 left-0 h-0.5 sm:h-1 transition-all duration-300 ${
+                      isActive ? 'w-full' : 'w-0'
+                    }`}
+                    style={{ backgroundColor: service.color }}
+                  />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
-};
-
-export default Services;
+}
